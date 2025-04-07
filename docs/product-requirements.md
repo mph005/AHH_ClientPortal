@@ -123,3 +123,35 @@ This portal will serve as a comprehensive business management system, handling e
 ### 6.1 Glossary of Terms
 ### 6.2 References
 ### 6.3 Related Documents
+
+## User Roles & Permissions
+
+### User Types
+
+1. **Admin**
+   - Full access to all system features
+   - Manage clients, appointments, services
+   - Access financial and business reports
+   - Configure system settings
+
+2. **Client**
+   - Self-service booking portal
+   - Profile management
+   - View appointment history
+   - Update personal information
+   - Complete health forms
+
+### Role-Based Access
+
+Access to features and data is restricted based on user role:
+
+| Feature | Admin | Client |
+|---------|-------|--------|
+| View all clients | ✅ | ❌ |
+| View own client profile | ✅ | ✅ |
+| Manage all appointments | ✅ | ❌ |
+| Manage own appointments | ✅ | ✅ |
+| View/edit services | ✅ | ❌ |
+| View business reports | ✅ | ❌ |
+| System configuration | ✅ | ❌ |
+| Complete health forms | ❌ | ✅ |

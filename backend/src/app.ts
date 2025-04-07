@@ -9,8 +9,8 @@ dotenv.config();
 
 // Import routes
 import authRoutes from './routes/auth.routes';
+import clientRoutes from './routes/client.routes';
 // import userRoutes from './routes/user.routes';
-// import clientRoutes from './routes/client.routes';
 // import appointmentRoutes from './routes/appointment.routes';
 // import serviceRoutes from './routes/service.routes';
 // import paymentRoutes from './routes/payment.routes';
@@ -29,9 +29,7 @@ app.use(helmet());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  max: 100, // Limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -46,8 +44,8 @@ app.get('/', (req: Request, res: Response) => {
 
 // Apply routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/clients', clientRoutes);
 // app.use('/api/v1/users', userRoutes);
-// app.use('/api/v1/clients', clientRoutes);
 // app.use('/api/v1/appointments', appointmentRoutes);
 // app.use('/api/v1/services', serviceRoutes);
 // app.use('/api/v1/payments', paymentRoutes);

@@ -7,7 +7,7 @@ export interface UserAttributes {
   id: number;
   email: string;
   password: string;
-  role: 'admin' | 'therapist' | 'client';
+  role: 'admin' | 'client';
   firstName: string;
   lastName: string;
   phone?: string;
@@ -24,7 +24,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public id!: number;
   public email!: string;
   public password!: string;
-  public role!: 'admin' | 'therapist' | 'client';
+  public role!: 'admin' | 'client';
   public firstName!: string;
   public lastName!: string;
   public phone!: string;
@@ -61,7 +61,7 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('admin', 'therapist', 'client'),
+      type: DataTypes.ENUM('admin', 'client'),
       allowNull: false,
       defaultValue: 'client',
     },

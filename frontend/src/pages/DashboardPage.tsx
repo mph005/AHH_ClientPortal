@@ -18,9 +18,11 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { useAppSelector } from '../hooks/reduxHooks';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Load dashboard data when component mounts
@@ -65,7 +67,7 @@ const DashboardPage = () => {
               <StatNumber>0</StatNumber>
               <StatHelpText>No clients registered yet</StatHelpText>
             </Stat>
-            <Button colorScheme="blue" size="sm" mt={4}>
+            <Button colorScheme="blue" size="sm" mt={4} onClick={() => navigate('/clients')}>
               Manage Clients
             </Button>
           </CardBody>
@@ -94,7 +96,7 @@ const DashboardPage = () => {
         </Heading>
         <HStack spacing={4} flexWrap="wrap">
           <Button colorScheme="blue">Book Appointment</Button>
-          <Button colorScheme="teal">Add New Client</Button>
+          <Button colorScheme="teal" onClick={() => navigate('/clients/new')}>Add New Client</Button>
           <Button colorScheme="purple">View Schedule</Button>
         </HStack>
       </Box>

@@ -250,7 +250,7 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  role ENUM('admin', 'therapist', 'client') DEFAULT 'client',
+  role ENUM('admin', 'client') DEFAULT 'client',
   reset_token VARCHAR(255),
   reset_token_expiry DATETIME,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -579,3 +579,47 @@ POST   /api/v1/health-forms            # Create/update health form
 - Node.js Best Practices: https://github.com/goldbergyoni/nodebestpractices
 - React Best Practices: https://reactjs.org/docs/thinking-in-react.html
 - MySQL Performance Optimization: https://dev.mysql.com/doc/refman/8.0/en/optimization.html
+
+## User Authentication & Authorization
+
+### User Roles
+
+The application uses a simple role-based authentication system with two primary roles:
+
+1. **Admin** - Full administrative privileges with access to all system functionality including:
+   - Managing all clients
+   - Managing all appointments
+   - Configuring services and pricing
+   - Accessing business reports and analytics
+   - Managing other user accounts
+
+2. **Client** - Limited access focused on their own information and appointments:
+   - Viewing and updating their profile
+   - Scheduling and managing their appointments
+   - Viewing their payment history
+   - Completing health forms and intake documents
+
+When a user registers through the public registration form, they are automatically assigned the "client" role and a client record is created for them in the database. Admins can be created manually through database seeding or by an existing admin updating a user's role.
+
+### Authentication Flow
+
+The application uses JSON Web Tokens (JWT) for authentication:
+
+1. User logs in with email/password
+2. Server validates credentials
+3. Server generates JWT containing:
+   - User ID (`userId`)
+   - Email
+   - Role
+4. Token is returned to client and stored in local storage
+5. Token is sent in Authorization header for protected API calls
+6. Server validates token for protected routes
+
+### Auth Middleware
+
+Protected routes use middleware that:
+1. Extracts the JWT from the Authorization header
+2. Verifies the token's validity and expiration
+3. Retrieves the associated user from the database
+4. Attaches the user object to the request
+5. Verifies appropriate role permissions for the requested resource

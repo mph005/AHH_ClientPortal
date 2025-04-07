@@ -1,6 +1,8 @@
 import app from './app';
 import sequelize from './config/database';
 import dotenv from 'dotenv';
+// Import model associations
+import './models/index';
 
 // Load environment variables
 dotenv.config();

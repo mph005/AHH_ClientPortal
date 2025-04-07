@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
-import { defaultSystem } from '@chakra-ui/react';
+import theme from './theme';
 
 // Layout
 import MainLayout from './components/layout/MainLayout';
@@ -12,6 +12,9 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import ClientsPage from './pages/clients/ClientsPage';
+import NewClientPage from './pages/clients/NewClientPage';
+import ClientDetailPage from './pages/clients/ClientDetailPage';
 
 // Auth components
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -19,7 +22,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 function App() {
   return (
     <Provider store={store}>
-      <ChakraProvider value={defaultSystem}>
+      <ChakraProvider theme={theme}>
         <Router>
           <MainLayout>
             <Routes>
@@ -31,6 +34,10 @@ function App() {
               {/* Protected routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/clients" element={<ClientsPage />} />
+                <Route path="/clients/new" element={<NewClientPage />} />
+                <Route path="/clients/:id" element={<ClientDetailPage />} />
+                
                 {/* Add more protected routes here */}
               </Route>
               

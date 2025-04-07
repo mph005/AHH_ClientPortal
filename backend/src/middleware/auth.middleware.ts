@@ -27,10 +27,10 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     // Verify token
     const secret = process.env.JWT_SECRET || 'your_jwt_secret_key';
-    const decoded = jwt.verify(token, secret) as { id: number };
+    const decoded = jwt.verify(token, secret) as { userId: number };
 
     // Find user by id
-    const user = await User.findByPk(decoded.id);
+    const user = await User.findByPk(decoded.userId);
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }

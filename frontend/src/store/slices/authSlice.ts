@@ -6,7 +6,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'therapist' | 'client';
+  role: 'admin' | 'client';
 }
 
 // Define auth state

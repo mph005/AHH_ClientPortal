@@ -105,12 +105,10 @@ Key backend design principles:
 
 ```
 Database Schema
-├── Users
-│   ├── Therapists
-│   └── Clients
+├── Users (admin, client roles)
+├── Clients (linked to user accounts)
 ├── Services
 ├── Appointments
-├── Client_Records
 ├── Health_Forms
 ├── Payments
 ├── Availability
