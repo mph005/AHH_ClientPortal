@@ -1,0 +1,70 @@
+# Dependency directories
+node_modules/
+/.pnp
+.pnp.js
+
+# Production build files
+dist/
+build/
+/out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+/coverage
+.nyc_output
+
+# Vite related
+.vite/
+.vercel
+
+# Database related
+*.sqlite
+*.sqlite3
+*.db
+
+# Backend specific
+backend/dist/
+backend/node_modules/
+backend/logs/
+
+# Frontend specific
+frontend/dist/
+frontend/node_modules/
+frontend/build/
+frontend/.vite/
+frontend/coverage/
+
+# Misc
+.cache/
+.temp/
+.tmp/
+.turbo 
