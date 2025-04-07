@@ -100,11 +100,15 @@ const ClientDetailPage = () => {
             ← Back to Clients
           </Button>
           <Heading as="h1" size="xl">
-            {client.user?.firstName} {client.user?.lastName}
+            {client.firstName && client.lastName 
+              ? `${client.firstName} ${client.lastName}`
+              : client.user?.firstName && client.user?.lastName 
+                ? `${client.user.firstName} ${client.user.lastName}`
+                : 'Client Details'}
           </Heading>
           <HStack mt={2}>
-            <Badge colorScheme={client.user?.active ? "green" : "red"}>
-              {client.user?.active ? "Active" : "Inactive"}
+            <Badge colorScheme={client.userId ? (client.user?.active ? "green" : "red") : "yellow"}>
+              {client.userId ? (client.user?.active ? "Active" : "Inactive") : "No User Account"}
             </Badge>
             <Text color="gray.500">Client since {new Date(client.createdAt).toLocaleDateString()}</Text>
           </HStack>
@@ -135,11 +139,11 @@ const ClientDetailPage = () => {
                       <Stack spacing={3}>
                         <Flex>
                           <Text fontWeight="bold" width="100px">Email:</Text>
-                          <Text>{client.user?.email}</Text>
+                          <Text>{client.email}</Text>
                         </Flex>
                         <Flex>
                           <Text fontWeight="bold" width="100px">Phone:</Text>
-                          <Text>{client.user?.phone || 'N/A'}</Text>
+                          <Text>{client.phone || client.user?.phone || 'N/A'}</Text>
                         </Flex>
                       </Stack>
                     </Box>
@@ -181,7 +185,11 @@ const ClientDetailPage = () => {
                       <Stack spacing={3}>
                         <Flex>
                           <Text fontWeight="bold" width="100px">Birth Date:</Text>
-                          <Text>{client.dateOfBirth || 'N/A'}</Text>
+                          <Text>
+                            {client.dateOfBirth 
+                              ? new Date(client.dateOfBirth).toLocaleDateString() 
+                              : 'N/A'}
+                          </Text>
                         </Flex>
                       </Stack>
                     </Box>

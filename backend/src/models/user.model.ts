@@ -1,6 +1,23 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database';
-import bcrypt from 'bcrypt';
+import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+// Create a direct Sequelize instance within this file to avoid circular dependencies
+const dbName = process.env.DB_NAME || 'massage_portal';
+const dbUser = process.env.DB_USER || 'root';
+const dbPassword = process.env.DB_PASSWORD || '';
+const dbHost = process.env.DB_HOST || 'localhost';
+const dbPort = parseInt(process.env.DB_PORT || '3306', 10);
+
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+  host: dbHost,
+  port: dbPort,
+  dialect: 'mysql',
+  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+});
 
 // Define interface for User attributes
 export interface UserAttributes {
@@ -36,7 +53,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   
   // Define additional methods
   public async comparePassword(candidatePassword: string): Promise<boolean> {
-    return bcrypt.compare(candidatePassword, this.password);
+    return require('bcrypt').compare(candidatePassword, this.password);
   }
 }
 
@@ -90,11 +107,13 @@ User.init(
     hooks: {
       beforeCreate: async (user: User) => {
         if (user.password) {
+          const bcrypt = require('bcrypt');
           user.password = await bcrypt.hash(user.password, 10);
         }
       },
       beforeUpdate: async (user: User) => {
         if (user.changed('password')) {
+          const bcrypt = require('bcrypt');
           user.password = await bcrypt.hash(user.password, 10);
         }
       },
@@ -102,4 +121,6 @@ User.init(
   }
 );
 
+// Export both the User model and the sequelize instance
+export { sequelize };
 export default User; 

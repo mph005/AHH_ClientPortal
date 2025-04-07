@@ -159,17 +159,27 @@ const ClientList = ({ initialClients = [] }: ClientListProps) => {
           <Box key={client.id} p={4} borderWidth="1px" borderRadius="lg">
             <Flex justify="space-between" align="center">
               <Heading size="md">
-                {client.user?.firstName} {client.user?.lastName}
+                {client.user ? 
+                  `${client.user.firstName} ${client.user.lastName}` :
+                  'Client (Not Registered)'
+                }
               </Heading>
-              <Box bg={client.user?.active ? 'green.100' : 'red.100'} color={client.user?.active ? 'green.700' : 'red.700'} px={2} borderRadius="full">
-                {client.user?.active ? 'Active' : 'Inactive'}
+              <Box 
+                bg={client.user ? (client.user.active ? 'green.100' : 'red.100') : 'yellow.100'} 
+                color={client.user ? (client.user.active ? 'green.700' : 'red.700') : 'yellow.700'} 
+                px={2} 
+                borderRadius="full"
+              >
+                {client.user ? 
+                  (client.user.active ? 'Active' : 'Inactive') : 
+                  'Pending Registration'}
               </Box>
             </Flex>
             <Box borderBottomWidth="1px" my={2} />
             <Stack gap={2}>
               <Flex>
                 <Text fontWeight="bold" width="100px">Email:</Text>
-                <Text>{client.user?.email}</Text>
+                <Text>{client.user?.email || client.email}</Text>
               </Flex>
               <Flex>
                 <Text fontWeight="bold" width="100px">Phone:</Text>

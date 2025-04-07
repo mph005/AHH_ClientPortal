@@ -16,7 +16,7 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Resolver, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAppSelector } from '../../hooks/reduxHooks';
@@ -28,7 +28,11 @@ interface ClientFormProps {
 
 // Form validation schema
 const schema = yup.object().shape({
-  userId: yup.number().required('User ID is required'),
+  userId: yup.number().nullable(),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  phone: yup.string().optional(),
+  firstName: yup.string().optional(),
+  lastName: yup.string().optional(),
   address: yup.string().optional(),
   city: yup.string().optional(),
   state: yup.string().optional(),
@@ -46,6 +50,7 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAppSelector((state) => state.auth);
   const bgColor = useColorModeValue('white', 'gray.700');
+  const isAdmin = user?.role === 'admin';
 
   const {
     register,
@@ -53,9 +58,10 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
     reset,
     formState: { errors },
   } = useForm<ClientFormData>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as Resolver<ClientFormData>,
     defaultValues: {
-      userId: user?.id || 0,
+      // Don't automatically set userId for admin users creating new clients
+      userId: isAdmin && !isEdit ? null : user?.id || null,
     },
   });
 
@@ -65,14 +71,25 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
         try {
           setLoading(true);
           const clientData = await ClientService.getClientById(parseInt(id));
+          // Format date of birth for the input field (YYYY-MM-DD format)
+          let formattedDob = clientData.dateOfBirth;
+          if (clientData.dateOfBirth) {
+            const date = new Date(clientData.dateOfBirth);
+            formattedDob = date.toISOString().split('T')[0];
+          }
+          
           // Reset form with fetched client data
           reset({
             userId: clientData.userId,
+            email: clientData.email,
+            phone: clientData.phone,
+            firstName: clientData.firstName,
+            lastName: clientData.lastName,
             address: clientData.address,
             city: clientData.city,
             state: clientData.state,
             zipCode: clientData.zipCode,
-            dateOfBirth: clientData.dateOfBirth,
+            dateOfBirth: formattedDob,
             emergencyContactName: clientData.emergencyContactName,
             emergencyContactPhone: clientData.emergencyContactPhone,
             notes: clientData.notes,
@@ -90,7 +107,7 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
     }
   }, [isEdit, id, reset]);
 
-  const onSubmit = async (data: ClientFormData) => {
+  const onSubmit: SubmitHandler<ClientFormData> = async (data) => {
     try {
       setLoading(true);
       
@@ -118,6 +135,14 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
         {isEdit ? 'Edit Client Information' : 'Create New Client'}
       </Heading>
 
+      {!isEdit && isAdmin && (
+        <Box p={4} bg="blue.50" borderRadius="md" mb={4}>
+          <Text>
+            <strong>Admin Notice:</strong> You are creating a client record without a user account. The client will be able to register later using this email, and they will automatically be connected to this client record.
+          </Text>
+        </Box>
+      )}
+
       {error && (
         <Text color="red.500" mb={4}>
           {error}
@@ -132,6 +157,62 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
           />
 
           <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} width="100%">
+            <GridItem>
+              <FormControl isInvalid={!!errors.email} isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input 
+                  type="email" 
+                  placeholder="Enter email" 
+                  {...register('email')} 
+                />
+                {errors.email && (
+                  <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </GridItem>
+
+            <GridItem>
+              <FormControl isInvalid={!!errors.phone}>
+                <FormLabel>Phone Number</FormLabel>
+                <Input 
+                  type="tel" 
+                  placeholder="Enter phone number" 
+                  {...register('phone')} 
+                />
+                {errors.phone && (
+                  <FormErrorMessage>{errors.phone.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </GridItem>
+
+            <GridItem>
+              <FormControl isInvalid={!!errors.firstName}>
+                <FormLabel>First Name</FormLabel>
+                <Input 
+                  type="text" 
+                  placeholder="Enter first name" 
+                  {...register('firstName')} 
+                />
+                {errors.firstName && (
+                  <FormErrorMessage>{errors.firstName.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </GridItem>
+
+            <GridItem>
+              <FormControl isInvalid={!!errors.lastName}>
+                <FormLabel>Last Name</FormLabel>
+                <Input 
+                  type="text" 
+                  placeholder="Enter last name" 
+                  {...register('lastName')} 
+                />
+                {errors.lastName && (
+                  <FormErrorMessage>{errors.lastName.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </GridItem>
+
             <GridItem>
               <FormControl isInvalid={!!errors.address}>
                 <FormLabel>Address</FormLabel>
@@ -242,7 +323,7 @@ const ClientForm = ({ isEdit = false }: ClientFormProps) => {
             )}
           </FormControl>
 
-          <Flex gap={4} mt={4}>
+          <Flex gap={4} mt={2}>
             <Button
               type="submit"
               colorScheme="blue"

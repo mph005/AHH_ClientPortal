@@ -623,3 +623,191 @@ Protected routes use middleware that:
 3. Retrieves the associated user from the database
 4. Attaches the user object to the request
 5. Verifies appropriate role permissions for the requested resource
+
+# Technical Documentation
+
+## Architecture Overview
+
+The Massage Therapy Client Portal uses a standard client-server architecture:
+
+- **Frontend**: React SPA with Chakra UI and Redux state management
+- **Backend**: Node.js Express API server
+- **Database**: MySQL with Sequelize ORM
+
+## Backend Architecture
+
+### Core Components
+
+1. **Express Server**: Main API server handling HTTP requests
+2. **Sequelize ORM**: Database access layer with models and migrations
+3. **Authentication Middleware**: JWT-based authentication
+4. **Validation Layer**: Using express-validator for input validation
+
+### API Structure
+
+The backend follows a layered architecture:
+
+- **Routes**: Define API endpoints and HTTP methods
+- **Controllers**: Handle business logic and request/response processing
+- **Models**: Define database schema and relationships
+- **Middleware**: Handle cross-cutting concerns like authentication and validation
+- **Services**: (When needed) Encapsulate reusable business logic
+
+### Database Models
+
+#### Client Model
+
+The `Client` model represents a client in the system:
+
+```typescript
+export interface ClientAttributes {
+  id: number;
+  userId: number | null;  // References User model (can be null for clients without accounts)
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  dateOfBirth?: Date;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  notes?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+```
+
+#### User Model
+
+The `User` model represents users who can log into the system:
+
+```typescript
+export interface UserAttributes {
+  id: number;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  role: 'admin' | 'client';
+  active: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+```
+
+### Authentication
+
+Authentication uses JWT tokens:
+
+1. User logs in with email/password
+2. Server generates a JWT token containing user ID and role
+3. Token is included in all subsequent API requests via Authorization header
+4. Server validates token and attaches user info to the request
+
+### Validation
+
+Request validation happens in multiple layers:
+
+1. **Route-level validation**: Using express-validator to define validation rules
+2. **validateRequest middleware**: Processes validation results and returns errors
+3. **Model-level validation**: Sequelize model validations as a second line of defense
+
+## Frontend Architecture
+
+### Core Components
+
+1. **React**: UI library
+2. **Redux**: State management (with Redux Toolkit)
+3. **React Router**: Client-side routing
+4. **Chakra UI**: Component library
+5. **React Hook Form**: Form handling with validation
+
+### Data Flow
+
+1. **API Service Layer**: Centralizes API calls through service modules
+2. **Redux State**: Manages application state including auth and UI state
+3. **Component State**: Local state for component-specific concerns
+
+### Key Features Implementation
+
+#### Client Management
+
+The client management feature follows this pattern:
+
+1. **List View**: Displays all clients with basic information
+2. **Detail View**: Shows full client information with tabs for different sections
+3. **Create/Edit Forms**: Forms for creating and editing clients
+
+#### Form Handling
+
+Client forms use React Hook Form with Yup validation:
+
+```typescript
+const schema = yup.object().shape({
+  userId: yup.number().nullable(),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  firstName: yup.string().optional(),
+  lastName: yup.string().optional(),
+  phone: yup.string().optional(),
+  // Additional fields...
+});
+```
+
+## Important Implementation Details
+
+### Client-User Relationship
+
+A key aspect of the system is that clients can exist with or without user accounts:
+
+1. **With User Account**: Client is linked to a user via `userId` and can log in
+2. **Without User Account**: Client exists only in the system (created by admin), with `userId` as null
+
+This supports these workflows:
+- Admin creates a client record without a user account
+- Client registers later and gets connected to their existing client record via email
+
+### Null Handling
+
+Special attention is given to handling null/undefined/empty values:
+
+1. **Database**: Fields are nullable when appropriate
+2. **API**: Validation rules handle null and empty string appropriately
+3. **UI**: Form fields and displays handle empty/null values with fallbacks
+
+### Data Validation
+
+The validation approach includes:
+
+1. **Frontend validation**: Using Yup schemas with React Hook Form
+2. **API validation**: Using express-validator with custom options
+3. **Database constraints**: Including foreign keys and nullable constraints
+
+## Technical Decisions and Patterns
+
+### Authentication Strategy
+
+JWT tokens were chosen for authentication because:
+- They're stateless and don't require server-side storage
+- They include role information for authorization
+- They're easily verifiable on the server
+
+### Error Handling
+
+The error handling approach includes:
+
+1. **Detailed logging**: Comprehensive logging for debugging
+2. **Structured error responses**: Consistent error format in API responses
+3. **Multi-layer handling**: Errors caught at different levels depending on context
+
+### Migrations
+
+Database changes follow a migration pattern:
+1. Create a migration file using Sequelize CLI
+2. Define up/down methods for applying/reverting changes
+3. Apply migrations using the CLI
+
+This ensures database schema changes are tracked and can be reliably applied across environments.

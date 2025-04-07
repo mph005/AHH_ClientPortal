@@ -1,103 +1,116 @@
 # Massage Therapy Client Portal
 
-A comprehensive client management and appointment scheduling system for massage therapists.
+A comprehensive client management system for massage therapists to manage client information, appointments, and services.
 
-## Project Structure
+## Features
 
-This project is organized as a monorepo with the following components:
-
-- `/backend`: Node.js Express API with MySQL database
-- `/frontend`: React SPA with TypeScript and Chakra UI
-- `/docs`: Project documentation
+- **Client Management**: Create, view, edit and manage client information
+- **User Authentication**: Secure login and registration for therapists, admins, and clients
+- **Role-based Access Control**: Different access levels for admins and clients
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v20 or later)
-- MySQL (v8.0 or later)
-- Git
+- Node.js (v14+)
+- MySQL (v8.0+)
+- npm or yarn
 
-### Backend Setup
+### Installation
 
-1. Navigate to the backend directory:
-   ```bash
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd massage-therapy-client-portal
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Configure environment variables:
+   - Create a `.env` file in the backend directory
+   - Set the following variables:
+     ```
+     PORT=5000
+     DB_HOST=localhost
+     DB_USER=your_db_user
+     DB_PASSWORD=your_db_password
+     DB_NAME=massage_portal
+     JWT_SECRET=your_secret_key
+     ```
+
+4. Initialize the database:
+   ```
    cd backend
+   npx sequelize-cli db:create
+   npx sequelize-cli db:migrate
    ```
 
-2. Install dependencies:
-   ```bash
-   npm install
+5. Start the development servers:
    ```
-
-3. Create a `.env` file based on the `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-   
-4. Update the `.env` file with your MySQL database credentials
-
-5. Start the development server:
-   ```bash
    npm run dev
    ```
 
-### Frontend Setup
+## Project Structure
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+The application is divided into two main parts:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+- **Frontend**: React application with Chakra UI for styling
+- **Backend**: Node.js with Express and Sequelize ORM
 
-3. Create a `.env` file (if you need to customize the API URL):
-   ```bash
-   cp .env.example .env
-   ```
+### Key Directories
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+- `frontend/`: React frontend application
+- `backend/`: Node.js backend API
+- `docs/`: Project documentation including status and architecture
 
-## Features
+## Client Management
 
-- User authentication and authorization
-- Client management
-- Appointment scheduling and management
-- Service catalog management
-- Secure payment processing
-- Automated reminders and notifications
+### Features
 
-## Tech Stack
+- Create clients with or without user accounts (admin feature)
+- View detailed client information
+- Edit client details including contact information and notes
+- Track client emergency contacts
 
-### Backend
-- Node.js with Express
-- TypeScript
-- MySQL with Sequelize ORM
-- JWT for authentication
-- Express-validator for input validation
+### User Types
 
-### Frontend
-- React with TypeScript
-- Chakra UI for components
-- Redux Toolkit for state management
-- React Router for navigation
-- React Hook Form for form handling
+1. **Admin**: Can manage all clients and therapists
+2. **Client**: Can view and update their own information
+
+## API Documentation
+
+### Client Endpoints
+
+- `GET /api/v1/clients`: Get all clients (admin only)
+- `GET /api/v1/clients/:id`: Get client by ID
+- `POST /api/v1/clients`: Create a new client
+- `PUT /api/v1/clients/:id`: Update a client
+- `DELETE /api/v1/clients/:id`: Delete a client
+
+## Development Status
+
+Check [docs/status.md](docs/status.md) for the current development status, including completed work, in-progress features, and planned enhancements.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+[MIT License](LICENSE)
 
 ## Acknowledgments
 
-- [Chakra UI](https://chakra-ui.com/) for the component library
-- [Vite](https://vitejs.dev/) for frontend tooling
-- [Sequelize](https://sequelize.org/) for database ORM
+- [Chakra UI](https://chakra-ui.com/)
+- [Sequelize](https://sequelize.org/)
+- [Express](https://expressjs.com/)
 
 ## Project Status
 

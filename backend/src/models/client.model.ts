@@ -1,11 +1,14 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database';
-import User from './user.model';
+import User, { sequelize } from './user.model';
 
 // Define interface for Client attributes
 export interface ClientAttributes {
   id: number;
-  userId: number;
+  userId: number | null;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
   address?: string;
   city?: string;
   state?: string;
@@ -19,12 +22,16 @@ export interface ClientAttributes {
 }
 
 // Define interface for Client creation attributes
-export interface ClientCreationAttributes extends Optional<ClientAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+export interface ClientCreationAttributes extends Optional<ClientAttributes, 'id' | 'userId' | 'createdAt' | 'updatedAt'> {}
 
 // Define Client model
 class Client extends Model<ClientAttributes, ClientCreationAttributes> implements ClientAttributes {
   public id!: number;
-  public userId!: number;
+  public userId!: number | null;
+  public email!: string;
+  public firstName!: string;
+  public lastName!: string;
+  public phone!: string;
   public address!: string;
   public city!: string;
   public state!: string;
@@ -37,9 +44,6 @@ class Client extends Model<ClientAttributes, ClientCreationAttributes> implement
   // Timestamps
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-  
-  // Add user association getter
-  public getUser!: () => Promise<User>;
 }
 
 // Initialize Client model
@@ -52,13 +56,32 @@ Client.init(
     },
     userId: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'users',
         key: 'id',
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
+    },
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
+    firstName: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    lastName: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    phone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
     },
     address: {
       type: DataTypes.STRING(255),
@@ -101,11 +124,9 @@ Client.init(
 );
 
 // Setup associations
-export const initClientAssociations = () => {
-  Client.belongsTo(User, {
-    foreignKey: 'userId',
-    as: 'user',
-  });
-};
+Client.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
 
 export default Client; 

@@ -3,7 +3,11 @@ import api from './api';
 // Client interfaces
 export interface Client {
   id: number;
-  userId: number;
+  userId: number | null;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
   address?: string;
   city?: string;
   state?: string;
@@ -25,8 +29,13 @@ export interface Client {
   };
 }
 
+// Client form data interface
 export interface ClientFormData {
-  userId: number;
+  userId?: number | null;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
   address?: string;
   city?: string;
   state?: string;
@@ -42,32 +51,12 @@ const ClientService = {
   // Get all clients (therapist/admin only)
   getAllClients: async (): Promise<Client[]> => {
     try {
-      console.log('ClientService: Fetching all clients...');
-      
-      // Check if token exists (debugging)
-      const token = localStorage.getItem('token');
-      console.log('ClientService: Auth token exists:', !!token);
-      if (token) {
-        console.log('ClientService: First few chars of token:', token.substring(0, 10) + '...');
-      }
-      
+      console.log('Fetching all clients');
       const response = await api.get<{ clients: Client[] }>('/clients');
-      console.log('ClientService: API Response status:', response.status);
-      console.log('ClientService: Full response data:', JSON.stringify(response.data, null, 2));
-      
-      // Check the structure of the response
-      if (!response.data || !response.data.clients) {
-        console.warn('ClientService: Unexpected API response format:', response.data);
-        return [];
-      }
-
-      console.log(`ClientService: Found ${response.data.clients?.length || 0} clients`);
+      console.log('API Response:', response.data);
       return response.data.clients || [];
-    } catch (error: any) {
-      console.error('ClientService: Error in getAllClients:', error);
-      console.error('ClientService: Error response:', error.response?.data);
-      console.error('ClientService: Error status:', error.response?.status);
-      console.error('ClientService: Error message:', error.message);
+    } catch (error) {
+      console.error('Error in getAllClients:', error);
       throw error;
     }
   },

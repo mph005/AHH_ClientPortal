@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database';
-import User from './user.model';
+import User, { sequelize } from './user.model';
 import Service from './service.model';
 
 // Define appointment status enum
@@ -41,10 +40,6 @@ class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttrib
   // Timestamps
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-
-  // Associations
-  public readonly client?: User;
-  public readonly service?: Service;
 }
 
 // Initialize Appointment model
@@ -97,16 +92,14 @@ Appointment.init(
 );
 
 // Define associations
-export const initAppointmentAssociations = () => {
-  Appointment.belongsTo(User, {
-    foreignKey: 'clientId',
-    as: 'client',
-  });
-  
-  Appointment.belongsTo(Service, {
-    foreignKey: 'serviceId',
-    as: 'service',
-  });
-};
+Appointment.belongsTo(User, {
+  foreignKey: 'clientId',
+  as: 'client',
+});
+
+Appointment.belongsTo(Service, {
+  foreignKey: 'serviceId',
+  as: 'service',
+});
 
 export default Appointment; 

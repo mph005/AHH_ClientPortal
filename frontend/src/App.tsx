@@ -15,6 +15,7 @@ import DashboardPage from './pages/DashboardPage';
 import ClientsPage from './pages/clients/ClientsPage';
 import NewClientPage from './pages/clients/NewClientPage';
 import ClientDetailPage from './pages/clients/ClientDetailPage';
+import EditClientPage from './pages/clients/EditClientPage';
 
 // Auth components
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/clients" element={<ClientsPage />} />
                 <Route path="/clients/new" element={<NewClientPage />} />
                 <Route path="/clients/:id" element={<ClientDetailPage />} />
+                <Route path="/clients/:id/edit" element={<EditClientPage />} />
                 
                 {/* Add more protected routes here */}
               </Route>

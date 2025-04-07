@@ -28,17 +28,31 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       active: true
     });
     
-    // Automatically create a client record for the new user
-    try {
-      const clientRecord = await Client.create({
-        userId: user.id,
-        // Other fields will be filled later by the user
-      });
+    // Check if there's an existing client record with this email (created by admin)
+    let clientRecord;
+    const existingClient = await Client.findOne({ where: { email } });
+    
+    if (existingClient) {
+      // Update the existing client record with the user ID
+      existingClient.userId = user.id;
+      await existingClient.save();
       
-      console.log(`Automatically created client record for new user: ${user.id}`, clientRecord.id);
-    } catch (clientError) {
-      console.error('Error creating client record during registration:', clientError);
-      // Continue with registration even if client creation fails
+      console.log(`Connected user ${user.id} to existing client record: ${existingClient.id}`);
+      clientRecord = existingClient;
+    } else {
+      // Create a new client record if no existing one found
+      try {
+        clientRecord = await Client.create({
+          userId: user.id,
+          email: user.email,
+          // Other fields will be filled later by the user
+        });
+        
+        console.log(`Automatically created client record for new user: ${user.id}`, clientRecord.id);
+      } catch (clientError) {
+        console.error('Error creating client record during registration:', clientError);
+        // Continue with registration even if client creation fails
+      }
     }
     
     // Generate JWT token
@@ -62,9 +76,10 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     };
     
     res.status(201).json({
-      message: 'User registered successfully',
+      message: 'Registration successful',
       user: userResponse,
-      token
+      token,
+      clientId: clientRecord?.id
     });
   } catch (error) {
     next(error);

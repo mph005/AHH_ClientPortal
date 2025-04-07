@@ -1,22 +1,21 @@
-import User from './user.model';
+import User, { sequelize } from './user.model';
+import Client from './client.model';
 import Service from './service.model';
-import Appointment, { initAppointmentAssociations } from './appointment.model';
-import Client, { initClientAssociations } from './client.model';
+import Appointment from './appointment.model';
 
-// Initialize all model associations
-const initializeAssociations = () => {
-  initClientAssociations();
-  initAppointmentAssociations();
-  
-  // Add more association initializations as needed
+// Export all models and sequelize instance
+export {
+  sequelize,
+  User,
+  Client,
+  Service,
+  Appointment
 };
 
-// Initialize associations
-initializeAssociations();
-
-export {
+export default {
+  sequelize,
   User,
+  Client,
   Service,
-  Appointment,
-  Client
+  Appointment
 }; 

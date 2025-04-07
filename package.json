@@ -1,0 +1,18 @@
+{
+  "name": "massage-therapy-client-portal",
+  "version": "1.0.0",
+  "description": "A comprehensive client management and appointment scheduling system for massage therapists",
+  "main": "index.js",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "PowerShell -Command \"Start-Process powershell -ArgumentList '-Command cd backend && npm run dev' -WindowStyle Hidden; Start-Process powershell -ArgumentList '-Command cd frontend && npm run dev'\""
+  },
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+} 

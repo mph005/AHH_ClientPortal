@@ -1,17 +1,16 @@
 import app from './app';
-import sequelize from './config/database';
 import dotenv from 'dotenv';
-// Import model associations
-import './models/index';
+import { sequelize } from './models/index';
 
 // Load environment variables
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-// Test database connection
-const testDbConnection = async () => {
+// Start the server
+const startServer = async () => {
   try {
+    // Test database connection
     await sequelize.authenticate();
     console.log('Database connection has been established successfully.');
     
@@ -21,23 +20,16 @@ const testDbConnection = async () => {
       console.log('Database models synchronized.');
     }
     
+    // Start the Express server
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`API available at http://localhost:${PORT}`);
+    });
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error('Unable to start server:', error);
     process.exit(1);
   }
 };
 
-// Start the server
-const startServer = async () => {
-  await testDbConnection();
-  
-  app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-    console.log(`API available at http://localhost:${PORT}`);
-  });
-};
-
-startServer().catch(error => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-}); 
+// Run the server
+startServer(); 
